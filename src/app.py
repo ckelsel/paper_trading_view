@@ -70,7 +70,7 @@ class Application(Frame):
         self.trade_history_windows = None
         self.open_orders_view = None
         self.engine = TradeEngine()
-        self.initial_account = 1000
+        self.initial_account = 1000000
         self.final_account = self.initial_account
         self.commission = 0
         self.symbol = "BTCUSDT"
