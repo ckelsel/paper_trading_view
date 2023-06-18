@@ -262,6 +262,39 @@ class Application(Frame):
         except:
             self.show_error('Next Bar', 'Xpath error', 'Please report your error')
 
+    def validate_inputs(self, *args):
+        for arg in args:
+            if not arg:
+                self.show_error('Input', 'Empty items', 'Input values must not be Empty')
+                return False
+            try:
+                float(arg)
+            except ValueError:
+                self.show_error('Value Error', 'Invalid Value amount', 'Input values must be Numbers')
+                return False
+        return True
+
+    def calculate_rr_and_volume(self, enter_price, sl, tp, risk):
+        # Long Position
+        if tp > enter_price > sl:
+            r_r = round((tp-enter_price) / (enter_price - sl), 2)
+            volume = round(self.final_account * risk / ((enter_price-sl) / enter_price * 100),2)
+        # Short Position
+        elif tp < enter_price < sl:
+            r_r = round((enter_price - tp) / (sl - enter_price), 2)
+            volume = round(self.final_account * risk / ((sl-enter_price) / enter_price * 100),2)
+        else:
+            self.show_error('sl , tp error ', 'Invalid', 'Check your Sl , Tp with Price')
+            return None, None
+        return r_r, volume
+
+    def update_ui(self, r_r, volume):
+        print(r_r)
+        print(volume)
+        self.r_r.config(text=r_r)
+        self.volume_calculated.config(text=str(volume))
+        self.order_vol_entry.delete(0, 'end')
+        self.order_vol_entry.insert(0, str(volume))
 
     # Risk calculate Action
     def risk_action(self):
@@ -270,81 +303,23 @@ class Application(Frame):
         tp = self.take_profit_entry.get()
         risk = self.risk_entry.get()
 
+        if not self.validate_inputs(sl, tp, risk):
+            return
+        sl, tp, risk = float(sl), float(tp), float(risk)/100
+
         # market order
         if order_type == "market":
             enter_price = self.close_price
-
-            # Check inputs
-            if not sl or not tp or not risk:
-                self.show_error('Input', 'Empty items', 'Stop loss or Take profit or Risk must not be Empty')
-            try:
-                sl=float(sl)
-                tp=float(tp)
-                risk=float(risk)/100
-            except ValueError:
-                self.show_error('Value Error', 'Invalid Value amount', 'Stop loss or Take profit or Risk must not be Numbers')
-
-            # calculate R:R and Volume
-            if tp > enter_price > sl:
-                # Long Position
-                r_r = round((tp-enter_price) / (enter_price - sl), 2)
-                volume = round(self.final_account * risk / ((enter_price-sl) / enter_price * 100),2)
-                print(r_r)
-                print(volume)
-                self.r_r.config(text=r_r)
-                self.volume_calculated.config(text=str(volume))
-                self.order_vol_entry.delete(0, 'end')
-                self.order_vol_entry.insert(0, str(volume))
-
-            elif tp < enter_price < sl:
-                # Short Position
-                r_r = round((enter_price - tp) / (sl - enter_price), 2)
-                volume = round(self.final_account * risk / ((sl-enter_price) / enter_price * 100),2)
-                self.r_r.config(text=r_r)
-                self.volume_calculated.config(text=str(volume))
-                self.order_vol_entry.delete(0, 'end')
-                self.order_vol_entry.insert(0, str(volume))
-            else:
-                self.show_error('sl , tp error ', 'Invalid', 'Check your Sl , Tp with Market Price')
-
         # Limit order
         else:
             limit_entry = self.limit_price_entry.get()
+            if not self.validate_inputs(limit_entry):
+                return
+            enter_price = float(limit_entry)
 
-            # Check inputs
-            if not sl or not tp or not limit_entry or not risk:
-                self.show_error('Input', 'Empty items', 'limit_entry , Stop loss and Take profit must not be Empty')
-            try:
-                sl=float(sl)
-                tp=float(tp)
-                limit_entry=float(limit_entry)
-                risk=float(risk)/100
-            except ValueError:
-                self.show_error('Value Error', 'Invalid Value amount', 'limit_entry, Stop loss and Take profit must not be Numbers')
-
-            # calculate R:R and Volume
-            if tp > limit_entry > sl:
-                # Long Position
-                r_r = round((tp-limit_entry) / (limit_entry - sl), 2)
-                volume = round(self.final_account * risk / ((limit_entry-sl) / limit_entry * 100),2)
-                print(r_r)
-                print(volume)
-                self.r_r.config(text=r_r)
-                self.volume_calculated.config(text=str(volume))
-                self.order_vol_entry.delete(0, 'end')
-                self.order_vol_entry.insert(0, str(volume))
-
-            elif tp < limit_entry < sl:
-                # Short Position
-                r_r = round((limit_entry - tp) / (sl - limit_entry), 2)
-                volume = round(self.final_account * risk / ((sl-limit_entry) / limit_entry * 100),2)
-                self.r_r.config(text=r_r)
-                self.volume_calculated.config(text=str(volume))
-                self.order_vol_entry.delete(0, 'end')
-                self.order_vol_entry.insert(0, str(volume))
-
-            else:
-                self.show_error('sl , tp error ', 'Invalid', 'Check your Sl , Tp with limit_entry Price')
+        r_r, volume = self.calculate_rr_and_volume(enter_price, sl, tp, risk)
+        if r_r is not None and volume is not None:
+            self.update_ui(r_r, volume)
 
     def calculate_profit_loss(self):
         self.balance_checker()
