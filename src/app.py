@@ -16,7 +16,7 @@ from sys import platform
 import getpass
 import locale
 
-order_type = None
+order_type = "market"
 process1 = None
 
 options = webdriver.ChromeOptions()
@@ -510,8 +510,8 @@ class Application(Frame):
             self.show_message(title="Notice", message="there is no Trade yet ")
     def restart_action(self):
         self.engine.clean_all()
-        self.final_account = 1000
-        self.initial_account = 1000
+        self.final_account = 1000000
+        self.initial_account = 1000000
         self.commission = 0
         self.calculate_profit_loss()
         if self.open_orders_view:
