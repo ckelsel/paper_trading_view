@@ -274,7 +274,7 @@ class Application(Frame):
                 return False
         return True
 
-    def calculate_rr_and_volume(self, enter_price, sl, tp, risk):
+    def calculate_rr_and_volume(self, enter_price, sl, tp, risk, round_to_hundreds=True):
         # Long Position
         if tp > enter_price > sl:
             r_r = round((tp-enter_price) / (enter_price - sl), 2)
@@ -286,7 +286,12 @@ class Application(Frame):
         else:
             self.show_error('sl , tp error ', 'Invalid', 'Check your Sl , Tp with Price')
             return None, None
+        
+        if round_to_hundreds:
+            volume = round(volume / 100) * 100  # round to the nearest hundred
+        
         return r_r, volume
+
 
     def update_ui(self, r_r, volume):
         print(r_r)
@@ -317,6 +322,7 @@ class Application(Frame):
                 return
             enter_price = float(limit_entry)
 
+        print(f'enetr price : {enter_price} , sl : {sl} , tp : {tp} , risk : {risk}')
         r_r, volume = self.calculate_rr_and_volume(enter_price, sl, tp, risk)
         if r_r is not None and volume is not None:
             self.update_ui(r_r, volume)
