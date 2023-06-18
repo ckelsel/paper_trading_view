@@ -280,7 +280,7 @@ class Application(Frame):
             try:
                 sl=float(sl)
                 tp=float(tp)
-                risk=float(risk)
+                risk=float(risk)/100
             except ValueError:
                 self.show_error('Value Error', 'Invalid Value amount', 'Stop loss or Take profit or Risk must not be Numbers')
 
@@ -318,7 +318,7 @@ class Application(Frame):
                 sl=float(sl)
                 tp=float(tp)
                 limit_entry=float(limit_entry)
-                risk=float(risk)
+                risk=float(risk)/100
             except ValueError:
                 self.show_error('Value Error', 'Invalid Value amount', 'limit_entry, Stop loss and Take profit must not be Numbers')
 
