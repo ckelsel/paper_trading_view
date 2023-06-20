@@ -27,6 +27,8 @@ bg_color = "#FFFFFF"
 entry_bg_color = "#EEEBEB"
 profit_color = "#237221"
 loss_color = "red"
+width=424
+height=834
 
 # X paths
 

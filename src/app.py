@@ -130,6 +130,8 @@ class Application(Frame):
             a switch between market mode and Limit mode
         """
         if market_mode:
+            self.get_price_data()
+
             global order_type
             order_type = 'market'
             self.limit_price_entry.delete(0, 'end')
@@ -260,8 +262,6 @@ class Application(Frame):
 
         try:
             action1.perform()
-            sleep(1)
-            self.get_price_data()
         except:
             self.show_error('Next Bar', 'Xpath error', 'Please report your error')
 
@@ -525,8 +525,32 @@ class Application(Frame):
             self.show_trade_history()
         self.clear_entry()
 
+    def close_part_pos_action(self):
+        if self.engine.open_positions:
+            self.get_price_data()
+
+            order_vol = self.order_vol_entry.get()
+
+            if order_vol:
+                try:
+                    order_vol = float(order_vol)
+                except ValueError:
+                    order_vol = None
+            
+            self.engine.close_position(self.engine.open_positions[0], self.close_price, order_vol)
+            self.show_message(title="Done", message=f"position {order_vol} closed at price {self.close_price}")
+            self.show_trade_history()
+
+            if self.open_positions_view:
+                self.show_open_position_history()
+
+        else:
+            self.show_message(title="info", message="you don't have any open position")
+
     def close_all_pos_action(self):
         if self.engine.open_positions:
+            self.get_price_data()
+
             self.engine.close_all_positions(self.close_price)
             self.show_message(title="Done", message=f"all open positions closed at price {self.close_price}")
             self.show_trade_history()
@@ -814,8 +838,8 @@ class Application(Frame):
 
         self.canvas = Canvas(
             bg=config.bg_color,
-            height=784,
-            width=424,
+            height=config.height,
+            width=config.width,
             bd=0,
             highlightthickness=0,
             relief="ridge"
@@ -1167,6 +1191,19 @@ class Application(Frame):
             width=107.0,
             height=39.0
         )
+        self.close_part_position= Button(
+            text="close position",
+            borderwidth=5,
+            highlightthickness=5,
+            command=self.close_part_pos_action,
+            relief="flat"
+        )
+        self.close_part_position.place(
+            x=10.0,
+            y=750.0,
+            width=107.0,
+            height=39.0
+        )
 
         self.clear_all_orders_button= Button(
             text="cancel open orders",
@@ -1387,7 +1424,7 @@ window = Tk()
 window.title('PTV - Paper Trading View (by xibalbas | github)')
 window["bg"] = config.bg_color
 window.attributes('-topmost', True)
-window.geometry("424x784")
+window.geometry(str(config.width)+"x"+str(config.height))
 window.resizable(False, False)
 img = PhotoImage(file=relative_to_assets('iconnn.png'))
 window.tk.call('wm', 'iconphoto', window._w, img)

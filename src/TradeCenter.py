@@ -226,26 +226,20 @@ class TradeEngine:
 
         if side == "long":
             if closed_price == stop_loss:
-                position = self.handle_trade_update(position, "sl_hit", volume, entry_price, stop_loss)
+                position = self.handle_trade_update(position, "sl_hit", volume, stop_loss, entry_price)
 
             elif closed_price == take_profit:
                 position = self.handle_trade_update(position, "tp_hit", volume, take_profit, entry_price)
 
-            elif closed_price > entry_price:
-                position = self.handle_trade_update(position, "closed", volume, closed_price, entry_price)
-
             else:
-                position = self.handle_trade_update(position, "closed", volume, entry_price, closed_price)
+                position = self.handle_trade_update(position, "closed", volume, closed_price, entry_price)
 
         elif side == "short":
             if closed_price == stop_loss:
-                position = self.handle_trade_update(position, "sl_hit", volume, stop_loss, entry_price)
+                position = self.handle_trade_update(position, "sl_hit", volume, entry_price, stop_loss)
 
             elif closed_price == take_profit:
                 position = self.handle_trade_update(position, "tp_hit", volume, entry_price, take_profit)
-
-            elif closed_price > entry_price:
-                position = self.handle_trade_update(position, "closed", volume, closed_price, entry_price)
 
             else:
                 position = self.handle_trade_update(position, "closed", volume, entry_price, closed_price)
@@ -262,7 +256,7 @@ class TradeEngine:
         """
         # Extracting position details
         entry_price = float(position["enter_price"])
-        volume = float(position["volume"]) - float(position["close_volume"])
+        volume = float(position["volume"])
         
         if closed_volume is None:
             closed_volume = volume
