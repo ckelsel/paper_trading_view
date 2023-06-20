@@ -117,6 +117,7 @@ class TradeEngine:
             "enter_price": f"{entry_price}",
             "stop_loss": f"{sl}",
             "take_profit": f"{tp}",
+            "close_volume": f"0",
             "volume": f"{volume}",
             "commission": f"{commission}",
             "unrealized_profit_loss": "",
@@ -208,11 +209,10 @@ class TradeEngine:
         
         return position
 
-    def close_position(self, position, closed_price):
+    def close_single_position(self, position, closed_price):
         """
         Closes an open position and writes into trade history.
         """
-        self.open_positions.remove(position)
         position["position_status"] = "closed"
         position["close_price"] = closed_price
         position["unrealized_profit_loss"] = 0
@@ -253,3 +253,33 @@ class TradeEngine:
         self.trade_list.append(position)
 
 
+
+    def close_position(self, position, closed_price, closed_volume=None):
+
+
+        """
+            closing open position and write into trade history .
+        """
+        # Extracting position details
+        entry_price = float(position["enter_price"])
+        volume = float(position["volume"]) - float(position["close_volume"])
+        
+        if closed_volume is None:
+            closed_volume = volume
+
+        # Check if the closed_volume is greater than the position volume
+        if closed_volume > volume:
+            print(f"Closed volume {closed_volume} is greater than the position volume {volume}")
+            return
+
+        if closed_volume < volume:
+            position["volume"] = str(volume - closed_volume)
+            position["close_volume"] = str(float(position["close_volume"]) + closed_volume)
+            position["unrealized_profit_loss"] = round(float(position["volume"]) * (closed_price - entry_price) / entry_price, 2)
+        else:
+            self.open_positions.remove(position)
+
+        closed_position = position.copy()
+        closed_position["volume"] = str(closed_volume)
+            
+        self.close_single_position(closed_position, closed_price)
