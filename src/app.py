@@ -1222,8 +1222,8 @@ class Application(Frame):
         )
 
         self.canvas.create_text(
-            250.0,
-            106.0,
+            36.0,
+            88.0,
             anchor="nw",
             text="commission:",
             fill=config.textarea_color,
@@ -1235,8 +1235,8 @@ class Application(Frame):
             bg="#FFFFFF"
         )
         self.commission_show.place(
-            x=340.0,
-            y=106.0,
+            x=144.0,
+            y=88.0,
         )
         self.total_balance = Label(
             text=str(self.final_account) + " $",
@@ -1245,7 +1245,7 @@ class Application(Frame):
         )
         self.total_balance.place(
             x=144.0,
-            y=88.0,
+            y=105.0,
         )
 
         self.initial_balance = Label(
@@ -1264,13 +1264,13 @@ class Application(Frame):
             font=("Ubuntu Regular", 14 * -1)
         )
         self.profit_loss_baalance.place(
-            x=144.0,
+            x=340.0,
             y=105.0,
         )
 
         self.canvas.create_text(
             36.0,
-            88.0,
+            106.0,
             anchor="nw",
             text="Total Balance:",
             fill=config.textarea_color,
@@ -1278,7 +1278,7 @@ class Application(Frame):
         )
 
         self.canvas.create_text(
-            36.0,
+            250.0,
             106.0,
             anchor="nw",
             text="Profit/Loss:",
