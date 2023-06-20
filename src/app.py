@@ -133,7 +133,7 @@ class Application(Frame):
             global order_type
             order_type = 'market'
             self.limit_price_entry.delete(0, 'end')
-            self.limit_price_entry.insert(0, "")
+            self.limit_price_entry.insert(0, self.close_price)
             self.limit_price_entry.config(state="disabled")
         else:
             order_type = 'limit'
@@ -236,8 +236,9 @@ class Application(Frame):
 
     # action for play button while chart is playing
     def get_price_while_play(self):
+        print('get price while play start')
         while True:
-            sleep(0.09)
+            sleep(1)
             out = self.get_price_data()
             if not self.status :
                 break
@@ -248,6 +249,7 @@ class Application(Frame):
                 global action
                 action.perform()
                 break
+        print('get price while play end')
 
     # Next bar action
     def next_bar_action(self):
@@ -258,6 +260,7 @@ class Application(Frame):
 
         try:
             action1.perform()
+            sleep(1)
             self.get_price_data()
         except:
             self.show_error('Next Bar', 'Xpath error', 'Please report your error')
