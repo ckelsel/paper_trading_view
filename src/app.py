@@ -299,6 +299,18 @@ class Application(Frame):
     def update_ui(self, r_r, volume):
         print(r_r)
         print(volume)
+        
+        driver.find_element_by_xpath(config.volume_button_xpath).click()
+        sleep(0.5)
+
+        input_element = driver.find_element_by_xpath(config.volume_xpath)
+        # 尝试使用 BACKSPACE 键清除输入框内容
+        for _ in range(len(input_element.get_attribute('value'))):
+            input_element.send_keys(Keys.BACKSPACE)
+        input_element.send_keys(volume)
+        input_element.send_keys(Keys.RETURN)
+
+        
         self.r_r.config(text=r_r)
         self.volume_calculated.config(text=str(volume))
         self.order_vol_entry.delete(0, 'end')
@@ -329,6 +341,8 @@ class Application(Frame):
         r_r, volume = self.calculate_rr_and_volume(enter_price, sl, tp, risk)
         if r_r is not None and volume is not None:
             self.update_ui(r_r, volume)
+
+            
 
     def calculate_profit_loss(self):
         self.balance_checker()
@@ -485,6 +499,9 @@ class Application(Frame):
             order_vol = float(self.order_vol_entry.get())
 
             if order_type == "market":
+
+                driver.find_element_by_xpath(config.buy_button_xpath).click()
+
                 entry_price = float(self.close_price)
                 self.engine.place_market_order(symbol=self.symbol, entry_price=entry_price, sl=sl, tp=tp, volume=order_vol,
                           commission=self.commission, side=side)
@@ -549,6 +566,8 @@ class Application(Frame):
 
     def close_all_pos_action(self):
         if self.engine.open_positions:
+            driver.find_element_by_xpath(config.flatten_button_xpath).click()
+
             self.get_price_data()
 
             self.engine.close_all_positions(self.close_price)

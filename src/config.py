@@ -28,7 +28,7 @@ entry_bg_color = "#EEEBEB"
 profit_color = "#237221"
 loss_color = "red"
 width=424
-height=834
+height=814
 
 # X paths
 
@@ -53,3 +53,10 @@ close_price_xpath_2 = '//div[@class="valuesAdditionalWrapper-1WIwNaDF"]/div[5]/d
 last_price_xpath = '/html/body/div[2]/div[5]/div[3]/div[1]/div/table/tr[1]/td[2]/div/div[2]/div[1]/div[1]/div[2]/div/div[8]/div[2]'
 
 symbol_xpath = '//*[@id="header-toolbar-symbol-search"]/div'
+
+buy_button_xpath = '/html/body/div[2]/div[5]/div[1]/div/div/div[4]/div[2]/button'
+sell_button_xpath = '/html/body/div[2]/div[5]/div[1]/div/div/div[4]/div[1]/button'
+flatten_button_xpath = '/html/body/div[2]/div[5]/div[1]/div/div/div[4]/div[3]/button'
+
+volume_xpath='//*[@id="overlap-manager-root"]/div/span/div[1]/div/div/div/div[1]/span/span[1]/input'
+volume_button_xpath='/html/body/div[2]/div[5]/div[1]/div/div/div[4]/button'
